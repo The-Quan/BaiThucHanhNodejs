@@ -32,21 +32,29 @@ const deleteProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
-        // Kiểm tra xem có tham số yêu cầu sắp xếp không
-        const sortBy = req.query.sortBy || 'ProductStoreCode'; // Sắp xếp theo ProductStoreCode
-        const sortOrder = req.query.order || 'asc';  // Nếu không có tham số order, mặc định là 'asc'
+        const sortBy = req.query.sortBy || 'ProductStoreCode'; // Sắp xếp theo 'ProductStoreCode' mặc định
+        const sortOrder = req.query.order === 'asc' ? 1 : -1;  // 'asc' = 1 (tăng dần), 'desc' = -1 (giảm dần)
 
-        // Sắp xếp dựa trên sortBy và order (1: tăng dần, -1: giảm dần)
-        const products = await Product.find().sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 });
-        
-        // Truyền products, sortBy, order vào view để hiển thị kết quả
-        res.render('index', { products, sortBy, order: sortOrder });
+        console.log('Sắp xếp theo:', sortBy, 'Thứ tự:', sortOrder);
+
+        // Lấy sản phẩm từ cơ sở dữ liệu và sắp xếp
+        const products = await Product.find().sort({ [sortBy]: sortOrder });
+
+        // Trả về kết quả sản phẩm đã sắp xếp và hiển thị trong trang
+        res.render('index', {
+            products,
+            sortBy,
+            order: req.query.order || 'desc',  // Mặc định 'desc' (giảm dần)
+            message: req.query.message || ''   // Thông báo nếu có
+        });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        console.error('Lỗi khi lấy sản phẩm:', err);
+        res.status(400).json({ error: 'Lỗi khi lấy sản phẩm: ' + err.message });
     }
 };
 
 
-  
 
-module.exports = { getAllProducts, createProduct, deleteProduct, getAllProductsSort };
+
+
+module.exports = { getAllProducts, createProduct, deleteProduct };

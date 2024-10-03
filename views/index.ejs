@@ -5,43 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Products</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light gray background for better contrast */
+            width: 800px;
+            margin: 0 auto;
+        }
+        h2 {
+            margin: 20px 0; /* Margin around headings */
+        }
+        .table {
+            margin-top: 20px; /* Space above the table */
+        }
+        .form-group {
+            margin-top: 30px; /* Space above the form */
+        }
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
 
 <div>
     <h2 class="text-center">All Products</h2>
 
-    
     <form method="GET" action="/" id="sortForm">
-        <label for="sortOrder">Sắp xếp:</label>
+        <label for="sortOrder">Sắp xếp theo:</label>
         <select name="order" id="sortOrder" class="form-control" onchange="submitSortForm()">
             <option value="asc">Tăng dần</option>
             <option value="desc">Giảm dần</option>
         </select>
-        <input type="hidden" name="sortBy" value="ProductStoreCode">
+        <input type="hidden" name="sortBy" value="ProductStoreCode"> <!-- Sắp xếp theo ProductStoreCode -->
     </form>
     
-    
     <script>
-        // Hàm này tự động submit form khi người dùng thay đổi lựa chọn trong dropdown
+        // Tự động submit form khi lựa chọn sắp xếp thay đổi
         function submitSortForm() {
             document.getElementById('sortForm').submit();
         }
     
-        // Hàm này đảm bảo rằng khi tải lại trang, dropdown sẽ hiển thị đúng trạng thái sắp xếp
+        // Khi trang tải lại, đảm bảo dropdown hiển thị đúng thứ tự sắp xếp
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const order = urlParams.get('order');
-            if (order) {
-                document.getElementById('sortOrder').value = order;
-            }
+            const order = urlParams.get('order') || 'desc';  // Mặc định là 'desc' nếu không có giá trị nào
+            document.getElementById('sortOrder').value = order;
         };
     </script>
-    
-    
-  
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
+    <table class="table table-striped">
+        <thead>
             <tr>
                 <th>Product Code</th>
                 <th>Name</th>
@@ -57,7 +72,7 @@
             <tr>
                 <td><%= product.ProductCode %></td>
                 <td><%= product.ProductName %></td>
-                <td><%= product.ProductDate.toDateString() %></td>
+                <td><%= new Date(product.ProductDate).toDateString() %></td>
                 <td><%= product.ProductOriginPrice %></td>
                 <td><%= product.Quantity %></td>
                 <td><%= product.ProductStoreCode %></td>
